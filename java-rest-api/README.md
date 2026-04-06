@@ -1,5 +1,8 @@
 # Java REST API
 
+<img width="1919" height="469" alt="Image" src="https://github.com/user-attachments/assets/d6ea2689-21f8-423b-aad1-84d670b9dbce" />
+<img width="1919" height="585" alt="Image" src="https://github.com/user-attachments/assets/698f0e40-144c-4d1a-829f-656cfead5c89" />
+
 Este projeto é uma API REST simples em Java, desenvolvida com Spring Boot. Ele disponibiliza endpoints para gerenciar itens e oferece suporte a respostas nos formatos JSON e XML.
 
 ## Estrutura do Projeto
