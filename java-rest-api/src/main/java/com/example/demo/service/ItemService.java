@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.InvalidItemDataException;
 import com.example.demo.model.Item;
 import org.springframework.stereotype.Service;
 
@@ -45,5 +46,39 @@ public class ItemService {
             return true;
         }
         return false;
+    }
+
+    public Item cloneItem(Long id) {
+        Item existingItem = getItemById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Item não encontrado para clonagem"));
+
+        if (existingItem.getName().contains("(Clone)")) {
+            throw new InvalidItemDataException("Não é permitido clonar um item que já é um clone.");
+        }
+
+        Item clonedItem = new Item();
+        clonedItem.setId(counter.incrementAndGet());
+        clonedItem.setName(existingItem.getName() + " (Clone)");
+        clonedItem.setDescription(existingItem.getDescription());
+        items.add(clonedItem);
+
+        return clonedItem;
+    }
+
+    // NOVO: Regra para alterar apenas o nome
+    public Item updateItemName(Long id, String newName) {
+        if (newName == null || newName.trim().isEmpty()) {
+            throw new InvalidItemDataException("O novo nome não pode ser vazio.");
+        }
+
+        Item existingItem = getItemById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Item não encontrado"));
+
+        if (existingItem.getName().equals(newName)) {
+            throw new InvalidItemDataException("O novo nome deve ser diferente do nome atual.");
+        }
+
+        existingItem.setName(newName);
+        return existingItem;
     }
 }

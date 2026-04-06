@@ -1,4 +1,5 @@
 package com.example.demo.exception;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -24,5 +25,17 @@ public class RestExceptionHandler extends ResponseEntityExceptionHandler {
                 errors.put(error.getField(), error.getDefaultMessage()));
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(InvalidItemDataException.class)
+    public ResponseEntity<Object> handleInvalidItemDataException(InvalidItemDataException ex) {
+        Map<String, String> response = new HashMap<>();
+        response.put("erro", ex.getMessage());
+        return new ResponseEntity<>(response, HttpStatus.UNPROCESSABLE_ENTITY); // Status 422
+    }
+
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Object> handleIllegalArgumentException(IllegalArgumentException ex) {
+        return ResponseEntity.notFound().build(); // Status 404
     }
 }

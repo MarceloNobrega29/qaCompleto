@@ -5,6 +5,15 @@ Este projeto é uma API REST simples em Java, desenvolvida com Spring Boot. Ele 
 ## Estrutura do Projeto
 
 ```
+# Java REST API
+
+Este projeto é uma API REST em Java, desenvolvida com Spring Boot. Ele disponibiliza endpoints para gerenciar itens, validar regras de negócio e oferece suporte a respostas nos formatos JSON e XML.
+
+## Estrutura do Projeto
+
+A arquitetura foi refatorada para separar as responsabilidades em camadas lógicas (Controller, Service, Model e Exception):
+
+```text
 java-rest-api
 ├── pom.xml
 ├── src
@@ -16,8 +25,13 @@ java-rest-api
 │   │   │               ├── DemoApplication.java
 │   │   │               ├── controller
 │   │   │               │   └── ApiController.java
-│   │   │               └── model
-│   │   │                   └── Item.java
+│   │   │               ├── exception
+│   │   │               │   ├── RestExceptionHandler.java
+│   │   │               │   └── InvalidItemDataException.java
+│   │   │               ├── model
+│   │   │               │   └── Item.java
+│   │   │               └── service
+│   │   │                   └── ItemService.java
 │   │   └── resources
 │   │       └── application.properties
 │   └── test
@@ -25,7 +39,9 @@ java-rest-api
 │           └── com
 │               └── example
 │                   └── demo
-│                       └── ApiControllerTest.java
+│                       ├── ApiControllerTest.java
+│                       └── service
+│                           └── ItemServiceTest.java
 └── README.md
 ```
 

@@ -1,6 +1,7 @@
 package com.example.demo;
 
 import com.example.demo.controller.ApiController;
+import com.example.demo.exception.InvalidItemDataException;
 import com.example.demo.model.Item;
 import com.example.demo.service.ItemService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -192,5 +193,47 @@ public void givenItemsExist_whenGetAllItems_thenReturns200AndItemList() throws E
         // Ação (When) e Verificação (Then)
         mockMvc.perform(delete("/api/items/1"))
                 .andExpect(status().isNoContent()); // Verifica pelo status 204
+    }
+
+    @Test
+    public void whenCloneItem_Success_thenReturns201Created() throws Exception {
+        Item clonedItem = new Item(2L, "Item 1 (Clone)", "Desc 1");
+        when(itemService.cloneItem(1L)).thenReturn(clonedItem);
+
+        mockMvc.perform(post("/api/items/1/clone"))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.name", is("Item 1 (Clone)")));
+    }
+
+    @Test
+    public void whenCloneItem_AlreadyClone_thenReturns422() throws Exception {
+        when(itemService.cloneItem(1L))
+                .thenThrow(new InvalidItemDataException("Não é permitido clonar um item que já é um clone."));
+
+        mockMvc.perform(post("/api/items/1/clone"))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.erro", is("Não é permitido clonar um item que já é um clone.")));
+    }
+
+    @Test
+    public void whenUpdateItemName_Success_thenReturns200Ok() throws Exception {
+        Item updatedItem = new Item(1L, "Novo Nome Legal", "Desc 1");
+        when(itemService.updateItemName(1L, "Novo Nome Legal")).thenReturn(updatedItem);
+
+        mockMvc.perform(patch("/api/items/1/name")
+                        .param("newName", "Novo Nome Legal"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name", is("Novo Nome Legal")));
+    }
+
+    @Test
+    public void whenUpdateItemName_SameName_thenReturns422() throws Exception {
+        when(itemService.updateItemName(1L, "Mesmo Nome"))
+                .thenThrow(new InvalidItemDataException("O novo nome deve ser diferente do nome atual."));
+
+        mockMvc.perform(patch("/api/items/1/name")
+                        .param("newName", "Mesmo Nome"))
+                .andExpect(status().isUnprocessableEntity())
+                .andExpect(jsonPath("$.erro", is("O novo nome deve ser diferente do nome atual.")));
     }
 }

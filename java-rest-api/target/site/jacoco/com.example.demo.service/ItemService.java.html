@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ItemService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">java-rest-api</a> &gt; <a href="index.source.html" class="el_package">com.example.demo.service</a> &gt; <span class="el_source">ItemService.java</span></div><h1>ItemService.java</h1><pre class="source lang-java linenums">package com.example.demo.service;
+
+import com.example.demo.exception.InvalidItemDataException;
+import com.example.demo.model.Item;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.atomic.AtomicLong;
+
+@Service
+<span class="fc" id="L13">public class ItemService {</span>
+
+<span class="fc" id="L15">    private List&lt;Item&gt; items = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L16">    private final AtomicLong counter = new AtomicLong();</span>
+
+    public List&lt;Item&gt; getAllItems() {
+<span class="fc" id="L19">        return items;</span>
+    }
+
+    public Optional&lt;Item&gt; getItemById(Long id) {
+<span class="fc" id="L23">        return items.stream()</span>
+<span class="fc" id="L24">                .filter(item -&gt; id.equals(item.getId()))</span>
+<span class="fc" id="L25">                .findFirst();</span>
+    }
+
+    public Item createItem(Item item) {
+<span class="fc" id="L29">        item.setId(counter.incrementAndGet());</span>
+<span class="fc" id="L30">        items.add(item);</span>
+<span class="fc" id="L31">        return item;</span>
+    }
+
+    //NOVOS
+    public Optional&lt;Item&gt; updateItem(Long id, Item newItemData) {
+<span class="fc" id="L36">        return getItemById(id).map(existingItem -&gt; {</span>
+<span class="fc" id="L37">            existingItem.setName(newItemData.getName());</span>
+<span class="fc" id="L38">            existingItem.setDescription(newItemData.getDescription());</span>
+<span class="fc" id="L39">            return existingItem;</span>
+        });
+    }
+
+    public boolean deleteItem(Long id) {
+<span class="pc bpc" id="L44" title="1 of 2 branches missed.">        if (getItemById(id).isPresent()) {</span>
+<span class="fc" id="L45">            items.removeIf(item -&gt; id.equals(item.getId()));</span>
+<span class="fc" id="L46">            return true;</span>
+        }
+<span class="nc" id="L48">        return false;</span>
+    }
+
+    public Item cloneItem(Long id) {
+<span class="fc" id="L52">        Item existingItem = getItemById(id)</span>
+<span class="pc" id="L53">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Item não encontrado para clonagem&quot;));</span>
+
+<span class="fc bfc" id="L55" title="All 2 branches covered.">        if (existingItem.getName().contains(&quot;(Clone)&quot;)) {</span>
+<span class="fc" id="L56">            throw new InvalidItemDataException(&quot;Não é permitido clonar um item que já é um clone.&quot;);</span>
+        }
+
+<span class="fc" id="L59">        Item clonedItem = new Item();</span>
+<span class="fc" id="L60">        clonedItem.setId(counter.incrementAndGet());</span>
+<span class="fc" id="L61">        clonedItem.setName(existingItem.getName() + &quot; (Clone)&quot;);</span>
+<span class="fc" id="L62">        clonedItem.setDescription(existingItem.getDescription());</span>
+<span class="fc" id="L63">        items.add(clonedItem);</span>
+
+<span class="fc" id="L65">        return clonedItem;</span>
+    }
+
+    // NOVO: Regra para alterar apenas o nome
+    public Item updateItemName(Long id, String newName) {
+<span class="pc bpc" id="L70" title="1 of 4 branches missed.">        if (newName == null || newName.trim().isEmpty()) {</span>
+<span class="fc" id="L71">            throw new InvalidItemDataException(&quot;O novo nome não pode ser vazio.&quot;);</span>
+        }
+
+<span class="fc" id="L74">        Item existingItem = getItemById(id)</span>
+<span class="pc" id="L75">                .orElseThrow(() -&gt; new IllegalArgumentException(&quot;Item não encontrado&quot;));</span>
+
+<span class="fc bfc" id="L77" title="All 2 branches covered.">        if (existingItem.getName().equals(newName)) {</span>
+<span class="fc" id="L78">            throw new InvalidItemDataException(&quot;O novo nome deve ser diferente do nome atual.&quot;);</span>
+        }
+
+<span class="fc" id="L81">        existingItem.setName(newName);</span>
+<span class="fc" id="L82">        return existingItem;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>

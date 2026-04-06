@@ -1,5 +1,6 @@
-C:\Users\apoli\OneDrive\Documents\p5\qa20252\java-rest-api\src\main\java\com\example\demo\controller\ApiController.java
-C:\Users\apoli\OneDrive\Documents\p5\qa20252\java-rest-api\src\main\java\com\example\demo\DemoApplication.java
-C:\Users\apoli\OneDrive\Documents\p5\qa20252\java-rest-api\src\main\java\com\example\demo\service\ItemService.java
-C:\Users\apoli\OneDrive\Documents\p5\qa20252\java-rest-api\src\main\java\com\example\demo\exception\RestExceptionHandler.java
-C:\Users\apoli\OneDrive\Documents\p5\qa20252\java-rest-api\src\main\java\com\example\demo\model\Item.java
+C:\Users\nobre\Documents\Devspace\qaCompleto\java-rest-api\src\main\java\com\example\demo\DemoApplication.java
+C:\Users\nobre\Documents\Devspace\qaCompleto\java-rest-api\src\main\java\com\example\demo\exception\RestExceptionHandler.java
+C:\Users\nobre\Documents\Devspace\qaCompleto\java-rest-api\src\main\java\com\example\demo\service\ItemService.java
+C:\Users\nobre\Documents\Devspace\qaCompleto\java-rest-api\src\main\java\com\example\demo\model\Item.java
+C:\Users\nobre\Documents\Devspace\qaCompleto\java-rest-api\src\main\java\com\example\demo\exception\InvalidItemDataException.java
+C:\Users\nobre\Documents\Devspace\qaCompleto\java-rest-api\src\main\java\com\example\demo\controller\ApiController.java

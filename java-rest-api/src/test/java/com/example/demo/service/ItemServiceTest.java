@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.exception.InvalidItemDataException;
 import com.example.demo.model.Item;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -93,5 +94,56 @@ public class ItemServiceTest {
         // Verificação (Then)
         assertTrue(wasDeleted, "O método deveria retornar true para uma remoção bem-sucedida");
         assertFalse(itemService.getItemById(id).isPresent(), "O item não deveria mais ser encontrado após a remoção");
+    }
+
+    @Test
+    void whenCloneItem_ValidItem_thenCreatesClone() {
+        Item original = itemService.createItem(new Item(null, "Cadeira", "Cadeira Gamer"));
+
+        Item cloned = itemService.cloneItem(original.getId());
+
+        assertNotNull(cloned.getId());
+        assertNotEquals(original.getId(), cloned.getId());
+        assertEquals("Cadeira (Clone)", cloned.getName());
+    }
+
+    @Test
+    void whenCloneItem_AlreadyAClone_thenThrowsException() {
+        Item original = itemService.createItem(new Item(null, "Mesa (Clone)", "Mesa de Escritório"));
+
+        Exception exception = assertThrows(InvalidItemDataException.class, () -> {
+            itemService.cloneItem(original.getId());
+        });
+
+        assertEquals("Não é permitido clonar um item que já é um clone.", exception.getMessage());
+    }
+
+    @Test
+    void whenUpdateItemName_ValidName_thenNameIsUpdated() {
+        Item item = itemService.createItem(new Item(null, "Teclado", "Teclado Mecânico"));
+
+        Item updated = itemService.updateItemName(item.getId(), "Teclado RGB");
+
+        assertEquals("Teclado RGB", updated.getName());
+    }
+
+    @Test
+    void whenUpdateItemName_SameName_thenThrowsException() {
+        Item item = itemService.createItem(new Item(null, "Mouse", "Mouse Óptico"));
+
+        Exception exception = assertThrows(InvalidItemDataException.class, () -> {
+            itemService.updateItemName(item.getId(), "Mouse");
+        });
+
+        assertEquals("O novo nome deve ser diferente do nome atual.", exception.getMessage());
+    }
+
+    @Test
+    void whenUpdateItemName_EmptyName_thenThrowsException() {
+        Item item = itemService.createItem(new Item(null, "Monitor", "Monitor 24"));
+
+        assertThrows(InvalidItemDataException.class, () -> {
+            itemService.updateItemName(item.getId(), "   ");
+        });
     }
 }

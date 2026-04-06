@@ -54,4 +54,18 @@ public class ApiController {
             return ResponseEntity.notFound().build();
         }
     }
+
+    // NOVO ENDPOINT 1: Clonar Item
+    @PostMapping("/{id}/clone")
+    public ResponseEntity<Item> cloneItem(@PathVariable Long id) {
+        Item clonedItem = itemService.cloneItem(id);
+        return new ResponseEntity<>(clonedItem, HttpStatus.CREATED);
+    }
+
+    // NOVO ENDPOINT 2: Renomear Item (PATCH)
+    @PatchMapping("/{id}/name")
+    public ResponseEntity<Item> updateItemName(@PathVariable Long id, @RequestParam String newName) {
+        Item updatedItem = itemService.updateItemName(id, newName);
+        return ResponseEntity.ok(updatedItem);
+    }
 }

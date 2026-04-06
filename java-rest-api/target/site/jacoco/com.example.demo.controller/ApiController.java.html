@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ApiController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">java-rest-api</a> &gt; <a href="index.source.html" class="el_package">com.example.demo.controller</a> &gt; <span class="el_source">ApiController.java</span></div><h1>ApiController.java</h1><pre class="source lang-java linenums">package com.example.demo.controller;
+
+import com.example.demo.model.Item;
+import com.example.demo.service.ItemService; // Importar
+import org.springframework.beans.factory.annotation.Autowired; // Importar
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+import javax.validation.Valid;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+@RequestMapping(&quot;/api/items&quot;)
+<span class="fc" id="L17">public class ApiController {</span>
+
+    @Autowired
+    private ItemService itemService; // Injetar o serviço
+
+    @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity&lt;List&lt;Item&gt;&gt; getAllItems() {
+<span class="fc" id="L24">        List&lt;Item&gt; allItems = itemService.getAllItems();</span>
+<span class="fc" id="L25">        return ResponseEntity.ok(allItems);</span>
+    }
+
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity&lt;Item&gt; createItem(@Valid @RequestBody Item item) {
+<span class="fc" id="L30">        Item createdItem = itemService.createItem(item);</span>
+<span class="fc" id="L31">        return new ResponseEntity&lt;&gt;(createdItem, HttpStatus.CREATED);</span>
+    }
+
+    @GetMapping(value = &quot;/{id}&quot;, produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
+    public ResponseEntity&lt;Item&gt; getItemById(@PathVariable Long id) {
+<span class="fc" id="L36">        return itemService.getItemById(id)</span>
+<span class="fc" id="L37">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L38">                .orElse(ResponseEntity.notFound().build());</span>
+    }
+
+    // NOVOS
+    @PutMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Item&gt; updateItem(@PathVariable Long id, @Valid @RequestBody Item item) {
+<span class="fc" id="L44">        return itemService.updateItem(id, item)</span>
+<span class="fc" id="L45">                .map(ResponseEntity::ok)</span>
+<span class="fc" id="L46">                .orElse(ResponseEntity.notFound().build());</span>
+    }
+
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; deleteItem(@PathVariable Long id) {
+<span class="pc bpc" id="L51" title="1 of 2 branches missed.">        if (itemService.deleteItem(id)) {</span>
+<span class="fc" id="L52">            return ResponseEntity.noContent().build(); // Retorna 204 No Content, a melhor prática para DELETE</span>
+        } else {
+<span class="nc" id="L54">            return ResponseEntity.notFound().build();</span>
+        }
+    }
+
+    // NOVO ENDPOINT 1: Clonar Item
+    @PostMapping(&quot;/{id}/clone&quot;)
+    public ResponseEntity&lt;Item&gt; cloneItem(@PathVariable Long id) {
+<span class="fc" id="L61">        Item clonedItem = itemService.cloneItem(id);</span>
+<span class="fc" id="L62">        return new ResponseEntity&lt;&gt;(clonedItem, HttpStatus.CREATED);</span>
+    }
+
+    // NOVO ENDPOINT 2: Renomear Item (PATCH)
+    @PatchMapping(&quot;/{id}/name&quot;)
+    public ResponseEntity&lt;Item&gt; updateItemName(@PathVariable Long id, @RequestParam String newName) {
+<span class="fc" id="L68">        Item updatedItem = itemService.updateItemName(id, newName);</span>
+<span class="fc" id="L69">        return ResponseEntity.ok(updatedItem);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.11.202310140853</span></div></body></html>
